@@ -54,12 +54,28 @@ mixin _$HomeController on _HomeControllerBase, Store {
     });
   }
 
+  final _$flagsAtom = Atom(name: '_HomeControllerBase.flags');
+
+  @override
+  ObservableList<FlagModel> get flags {
+    _$flagsAtom.reportRead();
+    return super.flags;
+  }
+
+  @override
+  set flags(ObservableList<FlagModel> value) {
+    _$flagsAtom.reportWrite(value, super.flags, () {
+      super.flags = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
 helper: ${helper},
 cards: ${cards},
-contas: ${contas}
+contas: ${contas},
+flags: ${flags}
     ''';
   }
 }

@@ -12,6 +12,7 @@ class AppTheme {
       primaryColor: AppColors.primary,
       accentColor: AppColors.primary,
       visualDensity: VisualDensity.adaptivePlatformDensity,
+      appBarTheme: AppBarTheme(brightness: Brightness.dark),
       dataTableTheme: DataTableThemeData(),
       timePickerTheme: TimePickerThemeData(
           backgroundColor: AppColors.primary,

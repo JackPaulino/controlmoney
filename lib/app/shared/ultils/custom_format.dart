@@ -7,6 +7,7 @@ class TextFormat {
   static var cabecalho = new TextStyle(fontSize: 30, color: Colors.white);
   static var number = new TextStyle(fontSize: 25, color: Colors.white);
   static var dados = new TextStyle(fontSize: 16, color: Colors.white);
+  static var dadoblack = new TextStyle(fontSize: 16, color: Colors.black);
   static var textField = new TextStyle(fontSize: 16, color: AppColors.primary);
 }
 

@@ -21,16 +21,13 @@ abstract class _CardControllerBase with Store {
   String dtaValid = '';
 
   @observable
-  bool ativo = true;
+  bool status = true;
 
   @observable
   bool edite = false;
 
   @observable
   int idCard = 0;
-
-  @observable
-  int idFlasg = 0;
 
   @observable
   FlagModel flagSelect =
@@ -86,7 +83,7 @@ abstract class _CardControllerBase with Store {
     limiteController.text = convertReal(card.limite);
     corController.text = card.cor;
     saldoController.text = convertReal(card.saldo);
-    ativo = statusStr[card.status];
+    status = statusStr[card.status];
     // ignore: unnecessary_statements
     flagSelect = card.flag;
     descFlag = flagSelect.name;
@@ -105,7 +102,7 @@ abstract class _CardControllerBase with Store {
         limite: double.parse(replaceAll(limiteController.text)),
         saldo: double.parse(replaceAll(saldoController.text)),
         cor: corController.text,
-        status: statusBool[ativo],
+        status: statusBool[status],
         flagId: flagSelect.id);
 
     Database dbControlMoney = await helper.db;
@@ -125,7 +122,7 @@ abstract class _CardControllerBase with Store {
       'limite': replaceAll(limiteController.text),
       'cor': corController.text,
       'saldo': replaceAll(saldoController.text),
-      'status': statusBool[ativo],
+      'status': statusBool[status],
       'flag_id': flagSelect.id
     };
     print(card);

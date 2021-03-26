@@ -39,18 +39,18 @@ mixin _$CardController on _CardControllerBase, Store {
     });
   }
 
-  final _$ativoAtom = Atom(name: '_CardControllerBase.ativo');
+  final _$statusAtom = Atom(name: '_CardControllerBase.status');
 
   @override
-  bool get ativo {
-    _$ativoAtom.reportRead();
-    return super.ativo;
+  bool get status {
+    _$statusAtom.reportRead();
+    return super.status;
   }
 
   @override
-  set ativo(bool value) {
-    _$ativoAtom.reportWrite(value, super.ativo, () {
-      super.ativo = value;
+  set status(bool value) {
+    _$statusAtom.reportWrite(value, super.status, () {
+      super.status = value;
     });
   }
 
@@ -81,6 +81,36 @@ mixin _$CardController on _CardControllerBase, Store {
   set idCard(int value) {
     _$idCardAtom.reportWrite(value, super.idCard, () {
       super.idCard = value;
+    });
+  }
+
+  final _$flagSelectAtom = Atom(name: '_CardControllerBase.flagSelect');
+
+  @override
+  FlagModel get flagSelect {
+    _$flagSelectAtom.reportRead();
+    return super.flagSelect;
+  }
+
+  @override
+  set flagSelect(FlagModel value) {
+    _$flagSelectAtom.reportWrite(value, super.flagSelect, () {
+      super.flagSelect = value;
+    });
+  }
+
+  final _$descFlagAtom = Atom(name: '_CardControllerBase.descFlag');
+
+  @override
+  String get descFlag {
+    _$descFlagAtom.reportRead();
+    return super.descFlag;
+  }
+
+  @override
+  set descFlag(String value) {
+    _$descFlagAtom.reportWrite(value, super.descFlag, () {
+      super.descFlag = value;
     });
   }
 
@@ -290,9 +320,11 @@ mixin _$CardController on _CardControllerBase, Store {
     return '''
 loading: ${loading},
 dtaValid: ${dtaValid},
-ativo: ${ativo},
+status: ${status},
 edite: ${edite},
 idCard: ${idCard},
+flagSelect: ${flagSelect},
+descFlag: ${descFlag},
 helper: ${helper},
 nameController: ${nameController},
 titularController: ${titularController},

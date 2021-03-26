@@ -1,6 +1,7 @@
 import 'package:controlmoney/app/shared/models/card_model.dart';
 import 'package:controlmoney/app/shared/ultils/custom_format.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import 'custom_auto_text.dart';
 
@@ -23,8 +24,12 @@ class CustomCard extends StatelessWidget {
                   flex: 2,
                   child: Row(
                     children: [
-                      Icon(Icons.credit_card_outlined,
-                          size: 35, color: Color(int.parse('0xff${card.cor}'))),
+                      Icon(
+                          card.status == 'A'
+                              ? MdiIcons.creditCard
+                              : MdiIcons.creditCardOff,
+                          size: 35,
+                          color: Color(int.parse('0xff${card.cor}'))),
                       SizedBox(width: 5),
                       CustomText(
                           test: '${card.name}', fontSize: 'top', corl: 'bck'),

@@ -45,11 +45,12 @@ abstract class _HomeControllerBase with Store {
   Future<void> getAllConta() async {
     Database dbControlMoney = await helper.db;
 
+    contas = <ContaModel>[].asObservable();
+
     List listMap = await dbControlMoney
         .rawQuery("SELECT * FROM $contaModel ORDER BY  $nameConta");
 
     for (Map m in listMap) {
-      print(m);
       contas.add(ContaModel.fromJson(m));
     }
   }

@@ -157,9 +157,7 @@ class _CardPageState extends ModularState<CardPage, CardController> {
 
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-          title: Text(widget.card.name ?? 'Cadastrar Novo Cartão'),
-          brightness: Brightness.dark),
+      appBar: AppBar(title: Text(widget.card.name ?? 'Cadastrar Novo Cartão')),
       body: SingleChildScrollView(
         child: Observer(
           builder: (_) {
@@ -281,7 +279,7 @@ class _CardPageState extends ModularState<CardPage, CardController> {
                             CustomText(
                                 title: 'Status',
                                 test:
-                                    '${controller.statusMap[controller.ativo]}',
+                                    '${controller.statusMap[controller.status]}',
                                 fontSize: 'bot',
                                 corl: 'wht'),
                           ],
@@ -714,11 +712,11 @@ class _CardPageState extends ModularState<CardPage, CardController> {
                                       flex: 1,
                                       child: Column(children: [
                                         Checkbox(
-                                            value: controller.ativo,
+                                            value: controller.status,
                                             activeColor: AppColors.primary,
                                             onChanged: (v) {
                                               setState(() {
-                                                controller.ativo = v;
+                                                controller.status = v;
                                               });
                                             }),
                                         Text('Ativo',

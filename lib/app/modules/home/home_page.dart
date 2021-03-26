@@ -1,14 +1,15 @@
 import 'package:controlmoney/app/shared/models/card_model.dart';
 import 'package:controlmoney/app/shared/models/conta_model.dart';
 import 'package:controlmoney/app/shared/theme/app_colors.dart';
+import 'package:controlmoney/app/shared/widget/CustomDialog.dart';
 import 'package:controlmoney/app/shared/widget/custom_app_bar.dart';
 import 'package:controlmoney/app/shared/widget/custom_card.dart';
 import 'package:controlmoney/app/shared/widget/custom_conta.dart';
 import 'package:controlmoney/app/shared/widget/separator_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'home_controller.dart';
 
 class HomePage extends StatefulWidget {
@@ -94,6 +95,14 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
     controller.getAllConta();
   }
 
+  Future<void> dialogAddRecDesp({context, Function onSubmitted}) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Container(child: CustomDialog());
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -105,7 +114,6 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
         SliverAppBar(
             expandedHeight: height * .27,
             backgroundColor: Colors.transparent,
-            brightness: Brightness.dark,
             floating: true,
             snap: true,
             flexibleSpace: FlexibleSpaceBar(background: CustomAppBar())),
@@ -126,7 +134,7 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
                       });
                 }).toList()),
                 // ignore: deprecated_member_use
-                RaisedButton(
+                /*    RaisedButton(
                   color: Colors.transparent,
                   elevation: 0,
                   onPressed: () {
@@ -145,7 +153,7 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
                       ],
                     ),
                   ),
-                ),
+                ), */
                 SeparatorBar(
                     title: 'Cartões',
                     fontSize: 20,
@@ -159,7 +167,7 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
                       });
                 }).toList()),
                 // ignore: deprecated_member_use
-                RaisedButton(
+                /*  RaisedButton(
                   color: Colors.transparent,
                   elevation: 0,
                   onPressed: () {
@@ -178,7 +186,7 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
                       ],
                     ),
                   ),
-                ),
+                ), */
               ],
             );
           })
@@ -189,30 +197,46 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
+        notchMargin: 5,
         color: AppColors.primary,
         child: IconTheme(
           data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
           child: Container(
+            width: width,
             height: 50,
             child: Row(
               children: <Widget>[
-                IconButton(
-                    tooltip: 'Open navigation menu',
-                    icon: const Icon(Icons.menu),
-                    onPressed: () {}),
-                IconButton(
-                    tooltip: 'Open navigation menu',
-                    icon: const Icon(Icons.credit_card_outlined),
-                    onPressed: () {}),
+                Expanded(
+                  child: IconButton(
+                      tooltip: 'Open navigation menu',
+                      icon: const Icon(Icons.menu),
+                      onPressed: () {}),
+                ),
+                Expanded(
+                  child: IconButton(
+                      tooltip: 'Open navigation menu',
+                      icon: const Icon(MdiIcons.creditCardPlus),
+                      onPressed: () {
+                        Modular.to
+                            .pushNamed('/card', arguments: [true, CardModel()]);
+                      }),
+                ),
                 const Spacer(),
-                IconButton(
-                    tooltip: 'Favorite',
-                    icon: const Icon(Icons.favorite),
-                    onPressed: () {}),
-                IconButton(
-                    tooltip: 'Open navigation menu',
-                    icon: const Icon(Icons.menu),
-                    onPressed: () {}),
+                Expanded(
+                  child: IconButton(
+                      tooltip: 'Favorite',
+                      icon: const Icon(MdiIcons.briefcasePlus),
+                      onPressed: () {
+                        Modular.to.pushNamed('/conta',
+                            arguments: [true, ContaModel()]);
+                      }),
+                ),
+                Expanded(
+                  child: IconButton(
+                      tooltip: 'Open navigation menu',
+                      icon: const Icon(Icons.menu),
+                      onPressed: () {}),
+                ),
               ],
             ),
           ),
