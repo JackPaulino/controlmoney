@@ -1,5 +1,6 @@
 import 'package:controlmoney/app/shared/models/card_model.dart';
 import 'package:controlmoney/app/shared/models/conta_model.dart';
+import 'package:controlmoney/app/shared/models/despesa_model.dart';
 import 'package:controlmoney/app/shared/models/flag_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -34,6 +35,17 @@ final String tipo = 'tipo';
 final String saldoConta = 'saldo';
 final String statusConta = 'status';
 
+// despesaModel
+final String despesaModel = 'despesaTABLE';
+final String idDespesa = 'id';
+final String nameDespesa = 'name';
+final String valorDespesa = 'valor';
+final String dataMov = 'data_mov';
+final String dataFat = 'data_fat';
+final String cartaoId = 'cartao_id';
+final String dataPag = 'data_pag';
+final String contaIdPag = 'conta_id';
+
 class DataBaseHelper {
   static final DataBaseHelper _instance = DataBaseHelper.internal();
 
@@ -57,7 +69,7 @@ class DataBaseHelper {
     final path = join(databasePath, 'controlmoney.db');
 
     var controlmoney =
-        await openDatabase(path, version: 2, onCreate: _createDB);
+        await openDatabase(path, version: 1, onCreate: _createDB);
 
     return controlmoney;
   }
@@ -89,6 +101,18 @@ class DataBaseHelper {
         "$saldoConta FLOAT," +
         "$tipo TEXT," +
         "$statusConta TEXT)");
+
+    await db.execute("CREATE TABLE $despesaModel(" +
+        "$idDespesa INTEGER PRIMARY KEY AUTOINCREMENT," +
+        "$nameDespesa TEXT," +
+        "$valorDespesa FLOAT," +
+        "$dataMov TEXT," +
+        "$dataFat TEXT," +
+        "$cartaoId, " +
+        "$dataPag TEXT," +
+        "$contaIdPag, " +
+        "FOREIGN KEY ($contaIdPag) REFERENCES $contaModel ($idConta), " +
+        "FOREIGN KEY ($cartaoId) REFERENCES $cardModel ($idCard))");
   }
 
   //Inserir CardModel
@@ -105,11 +129,18 @@ class DataBaseHelper {
     return conta;
   }
 
-  //Inserir ContaModel
+  //Inserir FlagModel
   Future<FlagModel> insertFlagModel(FlagModel flag) async {
     Database dbControlMoney = await db;
     flag.id = await dbControlMoney.insert(flagModel, flag.toJson());
     return flag;
+  }
+
+  //Inserir DespesaModel
+  Future<DespesaModel> insertDespesaModel(DespesaModel despesa) async {
+    Database dbControlMoney = await db;
+    despesa.id = await dbControlMoney.insert(despesaModel, despesa.toJson());
+    return despesa;
   }
 
   //Get Card

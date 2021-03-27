@@ -1,6 +1,7 @@
 import 'package:controlmoney/app/shared/helper/helper.dart';
 import 'package:controlmoney/app/shared/models/card_model.dart';
 import 'package:controlmoney/app/shared/models/conta_model.dart';
+import 'package:controlmoney/app/shared/models/despesa_model.dart';
 import 'package:controlmoney/app/shared/models/flag_model.dart';
 import 'package:mobx/mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -23,6 +24,9 @@ abstract class _HomeControllerBase with Store {
 
   @observable
   ObservableList<FlagModel> flags = <FlagModel>[].asObservable();
+
+  @observable
+  ObservableList<DespesaModel> desps = <DespesaModel>[].asObservable();
 
   //Lista oc Cartões
   Future<void> getAllCard() async {
@@ -65,6 +69,22 @@ abstract class _HomeControllerBase with Store {
     for (Map m in listMap) {
       print(m);
       flags.add(FlagModel.fromJson(m));
+    }
+  }
+
+  //Get Conta
+  Future<void> getAllDesps() async {
+    Database dbControlMoney = await helper.db;
+
+    List listMap = await dbControlMoney
+        .rawQuery("SELECT * FROM $despesaModel ORDER BY  $dataMov");
+
+    for (Map m in listMap) {
+      DespesaModel desp = DespesaModel.fromJson(m);
+      if (desp.cartaoId != null)
+        desp.card = cards.firstWhere((e) => e.id == desp.cartaoId);
+      print(desp.toJson());
+      desps.add(desp);
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:controlmoney/app/shared/models/card_model.dart';
 import 'package:controlmoney/app/shared/models/conta_model.dart';
 import 'package:controlmoney/app/shared/theme/app_colors.dart';
-import 'package:controlmoney/app/shared/widget/CustomDialog.dart';
+import 'package:controlmoney/app/shared/widget/CustomMov.dart';
 import 'package:controlmoney/app/shared/widget/custom_app_bar.dart';
 import 'package:controlmoney/app/shared/widget/custom_card.dart';
 import 'package:controlmoney/app/shared/widget/custom_conta.dart';
@@ -83,7 +83,15 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
 
     var conta1 =
         ContaModel(name: 'PICPAY', saldo: 2452.27, tipo: 'C', status: 'A');
-    controller.helper.insertContaModel(conta1); */
+    controller.helper.insertContaModel(conta1);
+
+    var despesa = DespesaModel(
+        name: 'Fatura',
+        valor: 326.0,
+        dataMov: '2021-03-10',
+        dataFat: '2021-03-10',
+        cartaoId: 1);
+    controller.helper.insertDespesaModel(despesa); */
 
     /* {id: 1, name: Nubank, titular: Jakson Henrique de Almeida Paulino, number: 5162926165942698, valid: 01/29,
      cvc: 825, limite: 2700.0, closure: 03, maturity: 10, cor: FF5115, saldo: null, status: A}
@@ -93,13 +101,14 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
     controller.getAllFlag();
     controller.getAllCard();
     controller.getAllConta();
+    controller.getAllDesps();
   }
 
-  Future<void> dialogAddRecDesp({context, Function onSubmitted}) async {
+  Future<void> dialogAddRecDesp(context, {Function onSubmitted}) async {
     return showDialog(
         context: context,
         builder: (context) {
-          return Container(child: CustomDialog());
+          return CustomMov();
         });
   }
 
@@ -193,7 +202,9 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
         ]))
       ]),
       floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add), tooltip: 'Create', onPressed: () {}),
+          child: const Icon(Icons.add),
+          tooltip: 'Create',
+          onPressed: () => dialogAddRecDesp(context)),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
@@ -209,7 +220,7 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
                 Expanded(
                   child: IconButton(
                       tooltip: 'Open navigation menu',
-                      icon: const Icon(Icons.menu),
+                      icon: const Icon(MdiIcons.cashMinus),
                       onPressed: () {}),
                 ),
                 Expanded(
@@ -234,7 +245,7 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
                 Expanded(
                   child: IconButton(
                       tooltip: 'Open navigation menu',
-                      icon: const Icon(Icons.menu),
+                      icon: const Icon(MdiIcons.cashPlus),
                       onPressed: () {}),
                 ),
               ],
