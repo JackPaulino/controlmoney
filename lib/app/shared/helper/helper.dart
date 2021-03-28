@@ -1,7 +1,5 @@
 import 'package:controlmoney/app/shared/models/card_model.dart';
 import 'package:controlmoney/app/shared/models/conta_model.dart';
-import 'package:controlmoney/app/shared/models/despesa_model.dart';
-import 'package:controlmoney/app/shared/models/flag_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -45,6 +43,7 @@ final String dataFat = 'data_fat';
 final String cartaoId = 'cartao_id';
 final String dataPag = 'data_pag';
 final String contaIdPag = 'conta_id';
+final String pg = 'pg';
 
 class DataBaseHelper {
   static final DataBaseHelper _instance = DataBaseHelper.internal();
@@ -111,36 +110,9 @@ class DataBaseHelper {
         "$cartaoId, " +
         "$dataPag TEXT," +
         "$contaIdPag, " +
+        "$pg TEXT," +
         "FOREIGN KEY ($contaIdPag) REFERENCES $contaModel ($idConta), " +
         "FOREIGN KEY ($cartaoId) REFERENCES $cardModel ($idCard))");
-  }
-
-  //Inserir CardModel
-  Future<CardModel> insertCardModel(CardModel card) async {
-    Database dbControlMoney = await db;
-    card.id = await dbControlMoney.insert(cardModel, card.toJson());
-    return card;
-  }
-
-  //Inserir ContaModel
-  Future<ContaModel> insertContaModel(ContaModel conta) async {
-    Database dbControlMoney = await db;
-    conta.id = await dbControlMoney.insert(contaModel, conta.toJson());
-    return conta;
-  }
-
-  //Inserir FlagModel
-  Future<FlagModel> insertFlagModel(FlagModel flag) async {
-    Database dbControlMoney = await db;
-    flag.id = await dbControlMoney.insert(flagModel, flag.toJson());
-    return flag;
-  }
-
-  //Inserir DespesaModel
-  Future<DespesaModel> insertDespesaModel(DespesaModel despesa) async {
-    Database dbControlMoney = await db;
-    despesa.id = await dbControlMoney.insert(despesaModel, despesa.toJson());
-    return despesa;
   }
 
   //Get Card

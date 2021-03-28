@@ -9,6 +9,12 @@ class TextFormat {
   static var dados = new TextStyle(fontSize: 16, color: Colors.white);
   static var dadoblack = new TextStyle(fontSize: 16, color: Colors.black);
   static var textField = new TextStyle(fontSize: 16, color: AppColors.primary);
+  static var movBlack = new TextStyle(
+      fontSize: 18.0, color: Colors.black, fontWeight: FontWeight.normal);
+  static var movWhite = new TextStyle(
+      fontSize: 18.0, color: Colors.white, fontWeight: FontWeight.normal);
+  static var movTopWhite = new TextStyle(
+      fontWeight: FontWeight.bold, color: Colors.white, fontSize: 22);
 }
 
 class Appformat {

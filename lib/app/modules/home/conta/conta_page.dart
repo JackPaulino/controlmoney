@@ -1,6 +1,6 @@
 import 'package:controlmoney/app/shared/models/conta_model.dart';
 import 'package:controlmoney/app/shared/theme/app_colors.dart';
-import 'package:controlmoney/app/shared/ultils/currency_input_formatter.dart';
+import 'package:controlmoney/app/shared/ultils/currency_number.dart';
 import 'package:controlmoney/app/shared/ultils/custom_format.dart';
 import 'package:controlmoney/app/shared/widget/custom_auto_text.dart';
 import 'package:controlmoney/app/shared/widget/custom_icon_button.dart';
@@ -199,7 +199,7 @@ class _ContaPageState extends ModularState<ContaPage, ContaController> {
                                   WhitelistingTextInputFormatter
                                       // ignore: deprecated_member_use
                                       .digitsOnly,
-                                  new CurrencyInputFormatter()
+                                  new CurrencyNumber()
                                 ],
                               ),
                               SizedBox(height: 10),

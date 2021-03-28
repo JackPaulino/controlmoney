@@ -2,7 +2,7 @@ import 'package:flutter/services.dart';
 
 import 'custom_format.dart';
 
-class CurrencyInputFormatter extends TextInputFormatter {
+class CurrencyNumber extends TextInputFormatter {
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.selection.baseOffset == 0) {

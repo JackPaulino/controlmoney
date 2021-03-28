@@ -28,6 +28,8 @@ abstract class _HomeControllerBase with Store {
   @observable
   ObservableList<DespesaModel> desps = <DespesaModel>[].asObservable();
 
+  //-------------------------------------------------------Get DataBase-----------------------------------------------------------------
+
   //Lista oc Cartões
   Future<void> getAllCard() async {
     Database dbControlMoney = await helper.db;
@@ -87,6 +89,46 @@ abstract class _HomeControllerBase with Store {
       desps.add(desp);
     }
   }
+
+  //-------------------------------------------------------Insert DataBase-----------------------------------------------------------------
+
+  //Inserir CardModel
+  Future<CardModel> insertCardModel(CardModel card) async {
+    Database dbControlMoney = await helper.db;
+    card.id = await dbControlMoney.insert(cardModel, card.toJson());
+    return card;
+  }
+
+  //Inserir ContaModel
+  Future<ContaModel> insertContaModel(ContaModel conta) async {
+    Database dbControlMoney = await helper.db;
+    conta.id = await dbControlMoney.insert(contaModel, conta.toJson());
+    return conta;
+  }
+
+  //Inserir FlagModel
+  Future<FlagModel> insertFlagModel(FlagModel flag) async {
+    Database dbControlMoney = await helper.db;
+    flag.id = await dbControlMoney.insert(flagModel, flag.toJson());
+    return flag;
+  }
+
+  //Inserir DespesaModel
+  Future<DespesaModel> insertDespesaModel(DespesaModel despesa) async {
+    Database dbControlMoney = await helper.db;
+    despesa.id = await dbControlMoney.insert(despesaModel, despesa.toJson());
+    return despesa;
+  }
+
+  //Inserir DespesaModel
+  Future<void> insertDesp(List<DespesaModel> deps) async {
+    Database dbControlMoney = await helper.db;
+    for (var dep in deps) {
+      dep.id = await dbControlMoney.insert(despesaModel, dep.toJson());
+    }
+  }
+
+  //-------------------------------------------------------Update DataBase-----------------------------------------------------------------
 }
 
 /* helper.getAllCard().then((lista) {

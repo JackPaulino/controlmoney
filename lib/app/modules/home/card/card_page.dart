@@ -1,6 +1,6 @@
 import 'package:controlmoney/app/shared/models/card_model.dart';
 import 'package:controlmoney/app/shared/theme/app_colors.dart';
-import 'package:controlmoney/app/shared/ultils/currency_input_formatter.dart';
+import 'package:controlmoney/app/shared/ultils/currency_number.dart';
 import 'package:controlmoney/app/shared/ultils/custom_format.dart';
 import 'package:controlmoney/app/shared/ultils/mask_map.dart';
 import 'package:controlmoney/app/shared/ultils/month_picker.dart';
@@ -584,7 +584,7 @@ class _CardPageState extends ModularState<CardPage, CardController> {
                                         WhitelistingTextInputFormatter
                                             // ignore: deprecated_member_use
                                             .digitsOnly,
-                                        new CurrencyInputFormatter()
+                                        new CurrencyNumber()
                                       ],
                                     ),
                                   ),
@@ -616,7 +616,7 @@ class _CardPageState extends ModularState<CardPage, CardController> {
                                         WhitelistingTextInputFormatter
                                             // ignore: deprecated_member_use
                                             .digitsOnly,
-                                        new CurrencyInputFormatter()
+                                        new CurrencyNumber()
                                       ],
                                     ),
                                   ),

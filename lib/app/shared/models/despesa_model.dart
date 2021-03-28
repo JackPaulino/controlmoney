@@ -2,16 +2,17 @@ import 'package:controlmoney/app/shared/models/card_model.dart';
 import 'package:controlmoney/app/shared/models/conta_model.dart';
 
 class DespesaModel {
-  int id;
-  String name;
-  double valor;
-  String dataMov;
-  String dataFat;
-  int cartaoId;
-  CardModel card;
-  String dataPag;
-  int contaId;
-  ContaModel conta;
+  int id; //           update pagamento
+  String name; //                        required
+  double valor; //                       required
+  String dataMov; //                     required
+  String dataFat; //                              opcional p/ Cartão
+  int cartaoId; //                                opcional p/ Cartão
+  CardModel card; //                              opcional p/ Cartão
+  String dataPag; //   update pagamento
+  int contaId; //      update pagamento
+  ContaModel conta; // update pagamento
+  String pg;
 
   DespesaModel(
       {this.id,
@@ -23,7 +24,8 @@ class DespesaModel {
       this.card,
       this.dataPag,
       this.contaId,
-      this.conta});
+      this.conta,
+      this.pg});
 
   DespesaModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -36,6 +38,7 @@ class DespesaModel {
     dataPag = json['data_pag'];
     contaId = json['conta_id'];
     conta = json['conta'] != null ? json['conta'] : null;
+    pg = json['pg'];
   }
 
   Map<String, dynamic> toJson() {
@@ -54,6 +57,7 @@ class DespesaModel {
     if (this.conta != null) {
       data['conta'] = this.conta.toJson();
     }
+    data['pg'] = this.pg;
     return data;
   }
 }

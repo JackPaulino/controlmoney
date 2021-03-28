@@ -1,7 +1,10 @@
+import 'package:controlmoney/app/modules/home/home_controller.dart';
 import 'package:controlmoney/app/shared/helper/helper.dart';
-import 'package:controlmoney/app/shared/ultils/currency_input_formatter.dart';
+import 'package:controlmoney/app/shared/ultils/currency_number.dart';
+import 'package:controlmoney/app/shared/ultils/custom_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:intl/intl.dart' as intl;
 
 final formatterDate = new intl.DateFormat('dd/MM/yyyy');
@@ -13,14 +16,77 @@ class CustomMov extends StatefulWidget {
 }
 
 class _CustomMovState extends State<CustomMov> {
-  int groupValueRadio = 1;
-  Color colorContainer = Colors.green[400];
-  Color colorTextButtom = Colors.green;
-  TextEditingController controllerValor = TextEditingController();
-  TextEditingController controllerDesc = TextEditingController();
-  TextEditingController controllerDat = TextEditingController();
+  HomeController homeController = Modular.get<HomeController>();
+  TextEditingController valorController = TextEditingController();
+  TextEditingController descController = TextEditingController();
+  TextEditingController datController = TextEditingController();
+  TextEditingController parcelaController = TextEditingController();
+  int radioGroupMov = 2;
+  int radioGroupTipo = 1;
+  Color colorContainer = Colors.red[400];
+  Color colorTextButtom = Colors.red[400];
+  String descMov = 'Receita';
+  String descCard = '';
+  String descConta = '';
+  bool parcelar = false;
 
   DataBaseHelper helper = DataBaseHelper();
+
+  Map<String, dynamic> mov = {
+    'id': null,
+    'name': null,
+    'valor': null,
+    'dataMov': null,
+    'dataFat': null,
+    'cartaoId': null,
+    'card': null,
+    'dataPag': null,
+    'contaId': null,
+    'conta': null,
+    'pg': null
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    descCard = homeController.cards[0].name;
+    descConta = homeController.contas[0].name;
+  }
+
+  submitDespesa() {
+    mov['name'] = descController.text;
+    mov['valor'] = double.parse(valorController.text);
+  }
+
+  Future<void> _showDatePicker(cxt) async {
+    final picked = await showDatePicker(
+      context: cxt,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900, 1),
+      lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: colorContainer, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: Colors.black, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                primary: colorContainer, // button text color
+              ),
+            ),
+          ),
+          child: child,
+        );
+      },
+    );
+    setState(() {
+      datController.text = Appformat.date.format(picked);
+      mov['dataMov'] = Appformat.dateHifen.format(picked);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,28 +96,53 @@ class _CustomMovState extends State<CustomMov> {
           shape: RoundedRectangleBorder(
               borderRadius:
                   BorderRadius.circular(constraints.maxWidth * 0.050)),
-          title: Text(
-            "Adicionar Valores",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-          ),
           backgroundColor: colorContainer,
           content: SingleChildScrollView(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
               children: <Widget>[
+                Text("Adicionar $descMov",
+                    textAlign: TextAlign.center, style: TextFormat.movTopWhite),
+                SizedBox(height: 5),
                 Row(children: <Widget>[
-                  Text("R\$ ",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: constraints.maxWidth * 0.06)),
+                  Radio(
+                      activeColor: Colors.white,
+                      value: 1,
+                      fillColor: MaterialStateProperty.resolveWith(
+                          (states) => Colors.white),
+                      groupValue: radioGroupMov,
+                      onChanged: (value) {
+                        setState(() {
+                          radioGroupMov = value;
+                          colorContainer = Colors.green[400];
+                          colorTextButtom = Colors.green;
+                          descMov = 'Receita';
+                        });
+                      }),
+                  Text("receita", style: TextFormat.movWhite),
+                  Radio(
+                      activeColor: Colors.white,
+                      fillColor: MaterialStateProperty.resolveWith(
+                          (states) => Colors.white),
+                      value: 2,
+                      groupValue: radioGroupMov,
+                      onChanged: (value) {
+                        setState(() {
+                          radioGroupMov = value;
+                          colorContainer = Colors.red[400];
+                          colorTextButtom = Colors.red[400];
+                          descMov = 'Despesa';
+                        });
+                      }),
+                  Text("despesa", style: TextFormat.movWhite)
+                ]),
+                SizedBox(height: 5),
+                Row(children: <Widget>[
                   Flexible(
                       child: TextField(
-                          controller: controllerValor,
+                          controller: valorController,
                           autofocus: true,
-                          maxLength: 8,
-                          style:
-                              TextStyle(fontSize: constraints.maxWidth * 0.05),
+                          style: TextFormat.movWhite,
                           keyboardType: TextInputType.number,
                           maxLines: 1,
                           inputFormatters: <TextInputFormatter>[
@@ -59,16 +150,13 @@ class _CustomMovState extends State<CustomMov> {
                             // ignore: deprecated_member_use
                             WhitelistingTextInputFormatter.digitsOnly,
                             //BlacklistingTextInputFormatter.singleLineFormatter,
-                            new CurrencyInputFormatter()
+                            new CurrencyNumber()
                           ],
                           decoration: new InputDecoration(
+                            prefixText: "R\$ ",
+                            prefixStyle: TextFormat.movWhite,
                             hintText: "0.00",
                             hintStyle: TextStyle(color: Colors.white54),
-                            contentPadding: EdgeInsets.only(
-                                left: constraints.maxWidth * 0.04,
-                                top: constraints.maxWidth * 0.041,
-                                bottom: constraints.maxWidth * 0.041,
-                                right: constraints.maxWidth * 0.04), //15),
                             focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(
                                     constraints.maxWidth * 0.04),
@@ -81,59 +169,18 @@ class _CustomMovState extends State<CustomMov> {
                                     color: Colors.white, width: 2.0)),
                           )))
                 ]),
-                Row(children: <Widget>[
-                  Radio(
-                      activeColor: Colors.white,
-                      focusColor: Colors.white,
-                      hoverColor: Colors.white,
-                      value: 1,
-                      groupValue: groupValueRadio,
-                      onChanged: (value) {
-                        setState(() {
-                          groupValueRadio = value;
-                          colorContainer = Colors.green[400];
-                          colorTextButtom = Colors.green;
-                        });
-                      }),
-                  Text("receita",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: constraints.maxWidth * 0.05)),
-                  Radio(
-                      activeColor: Colors.white,
-                      focusColor: Colors.white,
-                      hoverColor: Colors.white,
-                      value: 2,
-                      groupValue: groupValueRadio,
-                      onChanged: (value) {
-                        setState(() {
-                          groupValueRadio = value;
-                          colorContainer = Colors.red[400];
-                          colorTextButtom = Colors.red[400];
-                        });
-                      }),
-                  Text("despesa",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: constraints.maxWidth * 0.05))
-                ]),
+                SizedBox(height: 15),
                 TextField(
-                    controller: controllerDesc,
-                    maxLength: 20,
-                    style: TextStyle(fontSize: constraints.maxWidth * 0.05),
+                    controller: descController,
+                    style: TextFormat.movWhite,
                     keyboardType: TextInputType.text,
                     maxLines: 1,
                     textAlign: TextAlign.start,
                     textCapitalization: TextCapitalization.sentences,
+                    inputFormatters: [LengthLimitingTextInputFormatter(30)],
                     decoration: new InputDecoration(
                         hintText: "Descrição",
-                        labelText: "Descrição",
-                        labelStyle: TextStyle(color: Colors.white54),
-                        contentPadding: EdgeInsets.only(
-                            left: constraints.maxWidth * 0.04,
-                            top: constraints.maxWidth * 0.041,
-                            bottom: constraints.maxWidth * 0.041,
-                            right: constraints.maxWidth * 0.04),
+                        hintStyle: TextStyle(color: Colors.white54),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(
                                 constraints.maxWidth * 0.04),
@@ -144,59 +191,197 @@ class _CustomMovState extends State<CustomMov> {
                                 constraints.maxWidth * 0.04),
                             borderSide:
                                 BorderSide(color: Colors.white, width: 2.0)))),
-                Padding(
-                    padding: EdgeInsets.only(
-                        bottom: constraints.maxWidth * 0.09,
-                        top: constraints.maxWidth * 0.02),
-                    child: Row(children: <Widget>[
-                      Flexible(
-                          child: TextField(
-                              controller: controllerDat,
-                              style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.05),
-                              keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true),
-                              maxLines: 1,
-                              textAlign: TextAlign.end,
-                              decoration: new InputDecoration(
-                                  hintText:
-                                      formatterDate.format(DateTime.now()),
-                                  hintStyle: TextStyle(color: Colors.white54),
-                                  contentPadding: EdgeInsets.only(
-                                      left: constraints.maxWidth * 0.04,
-                                      top: constraints.maxWidth * 0.041,
-                                      bottom: constraints.maxWidth * 0.041,
-                                      right:
-                                          constraints.maxWidth * 0.04), //15),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          constraints.maxWidth * 0.04),
-                                      borderSide: BorderSide(
-                                          color: Colors.white, width: 2.0)),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          constraints.maxWidth * 0.04),
-                                      borderSide: BorderSide(
-                                          color: Colors.white, width: 2.0))))),
-                      IconButton(
-                          icon: Icon(Icons.calendar_today, color: Colors.white),
-                          onPressed: () {
-                            showDatePicker(
-                              locale: const Locale('pt'),
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2020),
-                              lastDate: DateTime(2030),
-                            ).then((date) {
-                              if (date != null) {
-                                setState(() {
-                                  controllerDat.text =
-                                      formatterDate.format(date);
-                                });
-                              }
+                SizedBox(height: 15),
+                Row(children: <Widget>[
+                  Flexible(
+                      child: TextField(
+                          controller: datController,
+                          style: TextFormat.movWhite,
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
+                          maxLines: 1,
+                          textAlign: TextAlign.end,
+                          onTap: () {
+                            FocusScope.of(context).requestFocus(FocusNode());
+                            _showDatePicker(context);
+                          },
+                          decoration: new InputDecoration(
+                              suffixIcon: Icon(Icons.calendar_today,
+                                  color: Colors.white),
+                              hintText: formatterDate.format(DateTime.now()),
+                              hintStyle: TextStyle(color: Colors.white54),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      constraints.maxWidth * 0.04),
+                                  borderSide: BorderSide(
+                                      color: Colors.white, width: 2.0)),
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      constraints.maxWidth * 0.04),
+                                  borderSide: BorderSide(
+                                      color: Colors.white, width: 2.0))))),
+                ]),
+                Row(children: <Widget>[
+                  Radio(
+                      activeColor: Colors.white,
+                      value: 1,
+                      fillColor: MaterialStateProperty.resolveWith(
+                          (states) => Colors.white),
+                      groupValue: radioGroupTipo,
+                      onChanged: (value) {
+                        setState(() {
+                          radioGroupTipo = value;
+                        });
+                      }),
+                  Text("Crédito", style: TextFormat.movWhite),
+                  Radio(
+                      activeColor: Colors.white,
+                      fillColor: MaterialStateProperty.resolveWith(
+                          (states) => Colors.white),
+                      value: 2,
+                      groupValue: radioGroupTipo,
+                      onChanged: (value) {
+                        setState(() {
+                          radioGroupTipo = value;
+                        });
+                      }),
+                  Text("Débito", style: TextFormat.movWhite)
+                ]),
+                SizedBox(height: 5),
+                radioGroupTipo == 1
+                    ? Container(
+                        height: 60,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.only(left: 12, right: 6),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white, width: 2.0),
+                            borderRadius: BorderRadius.circular(
+                                constraints.maxWidth * 0.04)),
+                        child: DropdownButton(
+                          elevation: 6,
+                          iconEnabledColor: Colors.white,
+                          isExpanded: true,
+                          underline: SizedBox(),
+                          style: TextFormat.movWhite,
+                          dropdownColor: Colors.white,
+                          selectedItemBuilder: (BuildContext context) {
+                            return homeController.cards.map((card) {
+                              return Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(descCard,
+                                      style: TextFormat.movWhite));
+                            }).toList();
+                          },
+                          items: homeController.cards.map((card) {
+                            return DropdownMenuItem<String>(
+                                value: card.name,
+                                onTap: () {
+                                  mov['cartaoId'] = card.id;
+                                  mov['card'] = card;
+                                  mov['contaId'] = null;
+                                  mov['conta'] = null;
+                                },
+                                child: Text(card.name,
+                                    style: TextFormat.movBlack));
+                          }).toList(),
+                          value: descCard,
+                          onChanged: (value) {
+                            setState(() {
+                              descCard = value;
                             });
-                          })
+                          },
+                        ),
+                      )
+                    : Container(
+                        height: 60,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.only(left: 12, right: 6),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white, width: 2.0),
+                            borderRadius: BorderRadius.circular(
+                                constraints.maxWidth * 0.04)),
+                        child: DropdownButton(
+                          elevation: 6,
+                          iconEnabledColor: Colors.white,
+                          isExpanded: true,
+                          underline: SizedBox(),
+                          style: TextFormat.movWhite,
+                          dropdownColor: Colors.white,
+                          selectedItemBuilder: (BuildContext context) {
+                            return homeController.contas.map((cont) {
+                              return Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(descConta,
+                                      style: TextFormat.movWhite));
+                            }).toList();
+                          },
+                          items: homeController.contas.map((cont) {
+                            return DropdownMenuItem<String>(
+                                value: cont.name,
+                                onTap: () {
+                                  mov['contaId'] = cont.id;
+                                  mov['conta'] = cont;
+                                  mov['cartaoId'] = null;
+                                  mov['card'] = null;
+                                },
+                                child: Text(cont.name,
+                                    style: TextFormat.movBlack));
+                          }).toList(),
+                          value: descConta,
+                          onChanged: (value) {
+                            setState(() {
+                              descConta = value;
+                            });
+                          },
+                        ),
+                      ),
+                SizedBox(height: 15),
+                Row(
+                  children: [
+                    SizedBox(width: 5),
+                    Expanded(
+                        child: Column(children: [
+                      Checkbox(
+                          value: parcelar,
+                          activeColor: Colors.white,
+                          checkColor: colorTextButtom,
+                          fillColor: MaterialStateProperty.resolveWith(
+                              (states) => Colors.white),
+                          onChanged: (v) {
+                            setState(() {
+                              parcelar = v;
+                            });
+                          }),
+                      Text('Parcelado', style: TextFormat.movWhite),
                     ])),
+                    SizedBox(width: 5),
+                    Expanded(
+                      child: TextField(
+                          controller: descController,
+                          style: TextFormat.movWhite,
+                          keyboardType: TextInputType.text,
+                          maxLines: 1,
+                          textAlign: TextAlign.start,
+                          textCapitalization: TextCapitalization.sentences,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(30)
+                          ],
+                          decoration: new InputDecoration(
+                              hintText: "00",
+                              hintStyle: TextStyle(color: Colors.white54),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      constraints.maxWidth * 0.04),
+                                  borderSide: BorderSide(
+                                      color: Colors.white, width: 2.0)),
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      constraints.maxWidth * 0.04),
+                                  borderSide: BorderSide(
+                                      color: Colors.white, width: 2.0)))),
+                    ),
+                  ],
+                ),
                 Padding(
                   padding: EdgeInsets.only(top: constraints.maxWidth * 0.09),
                   child: Row(
@@ -210,49 +395,9 @@ class _CustomMovState extends State<CustomMov> {
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: constraints.maxWidth * 0.05))),
+                                  fontSize: 22))),
                       GestureDetector(
-                        onTap: () {
-                          /*  if (_controllerValor.text.isNotEmpty &&
-                            _controllerDesc.text.isNotEmpty &&
-                            _controllerDat.text.isNotEmpty) {
-                          // Movimentacoes mov = Movimentacoes();
-                          String valor;
-                          if (_controllerValor.text.contains(",")) {
-                            valor = _controllerValor.text
-                                .replaceAll(RegExp(","), ".");
-                            print(_controllerValor.text);
-                          } else {
-                            valor = _controllerValor.text;
-                          }
-                          print(valor);
-                          if (_controllerValor.text.substring(1, 2) == '.') {
-                            valor = _controllerValor.text.substring(0, 1) +
-                                _controllerValor.text.substring(2, 3) +
-                                _controllerValor.text.substring(3, 4) +
-                                _controllerValor.text.substring(4, 5) +
-                                '.' +
-                                _controllerValor.text.substring(6, 7) +
-                                _controllerValor.text.substring(7, 8);
-                          }
-
-                          mov.data = _controllerDat.text;
-                          mov.descricao = _controllerDesc.text;
-
-                          if (_groupValueRadio == 1) {
-                            mov.valor = double.parse(valor);
-                            mov.tipo = "r";
-                            helper.saveMovimentacao(mov);
-                          }
-                          if (_groupValueRadio == 2) {
-                            mov.valor = double.parse("-" + valor);
-                            mov.tipo = "d";
-                            helper.saveMovimentacao(mov);
-                          }
-                          Navigator.pop(context);
-                          //initState();
-                        } */
-                        },
+                        onTap: () {},
                         child: Container(
                           padding: EdgeInsets.only(
                               top: constraints.maxWidth * 0.02,
@@ -268,7 +413,7 @@ class _CustomMovState extends State<CustomMov> {
                               style: TextStyle(
                                   color: colorTextButtom,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: constraints.maxWidth * 0.05),
+                                  fontSize: 22),
                             ),
                           ),
                         ),
